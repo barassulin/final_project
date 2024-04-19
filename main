@@ -1,0 +1,116 @@
+# This is a sample Python script.
+import Map
+# Press Shift+F10 to execute it or replace it with your code.
+# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import move
+import pygame
+import Player
+# constants
+
+size_cube = 57
+size_line = 4
+
+# the pixel number of the up left corner in every cube
+up_limit = 84
+left_limit = 91
+# those are not existing cubes:
+down_limit = 694
+right_limit = 701
+
+window_width = 800
+window_height = 775
+PINK = (255, 146, 255)
+IMAGE = 'screen1new.jpg'
+ICE = 'ice.jpg'
+EMPTY_CUBE = 'empty_cube.jpg'
+PLAYER1_PIC = 'probPL1.jpg'
+PLAYER2_PIC = 'probPL2.jpg'
+REFRESH_RATE = 10
+
+"""
+checks if ice got to the limit: 
+    
+    if up_limit != down_limit:
+        screen.blit(ice, [left_limit, up_limit])
+        pygame.display.flip()
+        up_limit = up_limit+61
+"""
+
+
+# funcs
+def print_pic(file_name, x, y, key):
+    pic = pygame.image.load(file_name).convert()
+    if key is not None:
+        pic.set_colorkey(key)
+    screen.blit(pic, [x, y])
+    pygame.display.flip()
+
+
+def try_move(player, xi, yi):
+    x = player.xcube
+    y = player.ycube
+    if move.movep(player, xi, yi):
+
+        print_pic(EMPTY_CUBE, Map.Map[y][x].pixelh, Map.Map[y][x].pixelw, None)
+        print_pic(player.pic, Map.Map[player.ycube][player.xcube].pixelh, Map.Map[player.ycube][player.xcube].pixelw, None)
+
+
+player1 = Player.Player(4, 4, "pink", 0, "U", PLAYER1_PIC)
+player2 = Player.Player(5, 5, "purple", 0, "D", PLAYER2_PIC)
+
+# init screen
+pygame.init()
+size = (window_width, window_height)
+screen = pygame.display.set_mode(size)
+img = pygame.image.load(IMAGE)
+screen.blit(img, (0, 0))
+print_pic(ICE, left_limit, up_limit, None)
+print_pic(EMPTY_CUBE, left_limit, up_limit, None)
+print_pic(PLAYER1_PIC,335, 328, None)
+print_pic(PLAYER2_PIC,396, 389, None)
+
+ice_loop = False
+clock = pygame.time.Clock()
+finish = False
+while not finish:
+    xi = 0
+    yi = 0
+    if ice_loop:
+        Map.Map[ylocate][xlocate].update_ice()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finish = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                yi = -1
+            if event.key == pygame.K_DOWN:
+                yi = 1
+            if event.key == pygame.K_LEFT:
+                xi = -1
+            if event.key == pygame.K_RIGHT:
+                xi = 1
+            if xi+yi is not 0:
+                try_move(player1, xi, yi)
+            else:
+                if event.key == pygame.K_SPACE:
+                    ice_loop = True
+                    direction = player1.direction
+                    if direction == 'U':
+                        yi2 = -1
+                    if direction == 'D':
+                        yi2 = 1
+                    if direction == 'L':
+                        xi2 = -1
+                    if direction == 'R':
+                        xi2 = 1
+                    xlocate = player1.xcube + xi2
+                    ylocate = player1.ycube + yi2
+    clock.tick(REFRESH_RATE)
+pygame.quit()
+
+"""
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    print_hi('PyCharm')
+"""
+# See PyCharm help at https://www.jetbrains.com/help/pycharm/
