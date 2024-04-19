@@ -1,0 +1,31 @@
+window_width = 800
+window_height = 775
+PINK = (255, 146, 255)
+IMAGE = 'screen1new.jpg'
+ICE = 'ice.jpg'
+EMPTY_CUBE = 'empty_cube.jpg'
+PLAYER1_PIC = 'probPL1.jpg'
+PLAYER2_PIC = 'probPL2.jpg'
+REFRESH_RATE = 10
+
+
+class Cube:
+    def __init__(self, pixelw, pixelh, fruit, ice):
+        self.pixelw = pixelw
+        self.pixelh = pixelh
+        self.fruit = fruit
+        self.ice = ice
+
+    def update_ice(self):
+        if self.ice:
+            self.ice = False
+            return EMPTY_CUBE
+        else:
+            self.ice = True
+            return ICE
+
+    def got_fruit(self):
+        score = self.fruit
+        self.fruit = 0
+        return score
+
