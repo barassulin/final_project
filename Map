@@ -1,16 +1,40 @@
-import Map  # Importing Map class from Map.py
+import Cube
+
+size_cube = 57
+size_line = 4
+size_cube_and_line = size_cube + size_line
+# the pixel number of the up left corner in every cube
+up_limit = 84
+left_limit = 91
+# those are not existing cubes:
+down_limit = 694
+right_limit = 701
+
+# arr map
+Map = [[Cube.Cube(up_limit+y*size_cube_and_line,left_limit +x*size_cube_and_line, 0, False) for x in range(10)]
+       for y in range(10)]
 
 
-class Player:
-    def __init__(self, xcube, ycube, color, score, direction, pic):
-        self.xcube = xcube
-        self.ycube = ycube
-        self.color = color
-        self.score = score
-        self.direction = direction
-        self.pic = pic
+if __name__ == '__main__':
 
-    def check_got_fruit(self):
-        specific_cube = Map.Map[self.xcube][self.ycube]
-        if specific_cube.fruit > 0:
-            self.score = self.score + specific_cube.got_fruit()
+    print(Map)
+
+
+
+
+
+
+# funcs
+def update_all_ice():
+    """
+    get square - location
+    get which direction -
+        up(hight=hight-size_ice-size_line)
+        down(hight=hight+size_ice+size_line)
+        left(width=width-size_ice-size_line)
+        right(width=width+size_ice+size_line)
+    bool b = cube.is.ice(create/break)
+    while hight/width != limit&&is.ice==b:
+        func Cube.update_ice()
+        update location
+    """
