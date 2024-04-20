@@ -42,21 +42,28 @@ def print_pic(file_name, x, y, key):
     pic = pygame.image.load(file_name).convert()
     if key is not None:
         pic.set_colorkey(key)
-    screen.blit(pic, [x, y])
+    screen.blit(pic, [Map.Map[y][x].pixelw, Map.Map[y][x].pixelh])
     pygame.display.flip()
 
 
-def try_move(player, xi, yi):
+def try_move(player):
     x = player.xcube
     y = player.ycube
-    if move.movep(player, xi, yi):
+    if player.move(player2):
+        print_pic(EMPTY_CUBE, x, y, None)
+        print_pic(player.pic, player.xcube, player.ycube, None)
 
-        print_pic(EMPTY_CUBE, Map.Map[y][x].pixelh, Map.Map[y][x].pixelw, None)
-        print_pic(player.pic, Map.Map[player.ycube][player.xcube].pixelh, Map.Map[player.ycube][player.xcube].pixelw, None)
+
+def is_ice_loop(x, y, is_ice):
+    if Map.check_on_map(x, y):
+        if is_ice==None or is_ice==Map.Map[y][x].ice:
+            if x != player2.xcube or y != player2.ycube:
+                return True
+    return False
 
 
-player1 = Player.Player(4, 4, "pink", 0, "U", PLAYER1_PIC)
-player2 = Player.Player(5, 5, "purple", 0, "D", PLAYER2_PIC)
+player1 = Player.Player(4, 4, "pink", 0, [0, -1], PLAYER1_PIC)
+player2 = Player.Player(5, 5, "purple", 0, [0, 1], PLAYER2_PIC)
 
 # init screen
 pygame.init()
@@ -64,47 +71,45 @@ size = (window_width, window_height)
 screen = pygame.display.set_mode(size)
 img = pygame.image.load(IMAGE)
 screen.blit(img, (0, 0))
-print_pic(ICE, left_limit, up_limit, None)
-print_pic(EMPTY_CUBE, left_limit, up_limit, None)
-print_pic(PLAYER1_PIC,335, 328, None)
-print_pic(PLAYER2_PIC,396, 389, None)
+print_pic(PLAYER1_PIC,player1.xcube, player1.ycube, None)
+print_pic(PLAYER2_PIC,player2.xcube, player2.ycube, None)
 
+moved = False
 ice_loop = False
 clock = pygame.time.Clock()
 finish = False
 while not finish:
-    xi = 0
-    yi = 0
     if ice_loop:
-        Map.Map[ylocate][xlocate].update_ice()
+        print_pic(Map.Map[ylocate][xlocate].update_ice(), xlocate, ylocate, None)
+        xlocate = xlocate + xi2
+        ylocate = ylocate + yi2
+        ice_loop = is_ice_loop(xlocate, ylocate, is_ice)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finish = True
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                yi = -1
-            if event.key == pygame.K_DOWN:
-                yi = 1
-            if event.key == pygame.K_LEFT:
-                xi = -1
-            if event.key == pygame.K_RIGHT:
-                xi = 1
-            if xi+yi is not 0:
-                try_move(player1, xi, yi)
+            moved = True
+            if event.key == pygame.K_SPACE and not ice_loop:
+                xi2 = player1.direction[0]
+                yi2 = player1.direction[1]
+                xlocate = player1.xcube + xi2
+                ylocate = player1.ycube + yi2
+                ice_loop = is_ice_loop(xlocate, ylocate, None)
+                if ice_loop:
+                    is_ice = Map.Map[ylocate][xlocate].ice
+                moved = False
+            elif event.key == pygame.K_UP:
+                player1.direction = [0, -1]
+            elif event.key == pygame.K_DOWN:
+                player1.direction = [0, 1]
+            elif event.key == pygame.K_LEFT:
+                player1.direction = [-1, 0]
+            elif event.key == pygame.K_RIGHT:
+                player1.direction = [1, 0]
             else:
-                if event.key == pygame.K_SPACE:
-                    ice_loop = True
-                    direction = player1.direction
-                    if direction == 'U':
-                        yi2 = -1
-                    if direction == 'D':
-                        yi2 = 1
-                    if direction == 'L':
-                        xi2 = -1
-                    if direction == 'R':
-                        xi2 = 1
-                    xlocate = player1.xcube + xi2
-                    ylocate = player1.ycube + yi2
+                moved = False
+            if moved:
+                try_move(player1)
     clock.tick(REFRESH_RATE)
 pygame.quit()
 
