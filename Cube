@@ -29,3 +29,12 @@ class Cube:
         self.fruit = 0
         return score
 
+"""
+FRUIT_DICTIONARY = {
+    1: "FRUIT1",
+    2: "FRUIT2"
+}
+    if uri in REDIRECTION_DICTIONARY:
+        uri = REDIRECTION_DICTIONARY[uri]
+
+"""
