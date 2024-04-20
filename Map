@@ -11,17 +11,19 @@ down_limit = 694
 right_limit = 701
 
 # arr map
-Map = [[Cube.Cube(up_limit+y*size_cube_and_line,left_limit +x*size_cube_and_line, 0, False) for x in range(10)]
+Map = [[Cube.Cube(left_limit + x*size_cube_and_line, up_limit+y*size_cube_and_line, 0, False) for x in range(10)]
        for y in range(10)]
+
+
+def check_on_map(x, y):
+    if 0 <= x < 10 and 0 <= y < 10:
+        return True
+    return False
 
 
 if __name__ == '__main__':
 
     print(Map)
-
-
-
-
 
 
 # funcs
