@@ -11,9 +11,12 @@ class Player:
         self.pic = pic
 
     def check_got_fruit(self):
-        specific_cube = Map.Map[self.xcube][self.ycube]
+        b = False
+        specific_cube = Map.Map[self.ycube][self.xcube]
         if specific_cube.fruit > 0:
             self.score = self.score + specific_cube.got_fruit()
+            b = True
+        return b
 
     def move(self, player2):
         possible = True
