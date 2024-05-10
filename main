@@ -5,6 +5,7 @@ import Map
 import move
 import pygame
 import Player
+import random
 # constants
 
 size_cube = 57
@@ -26,6 +27,10 @@ EMPTY_CUBE = 'empty_cube.jpg'
 PLAYER1_PIC = 'probPL1.jpg'
 PLAYER2_PIC = 'probPL2.jpg'
 REFRESH_RATE = 10
+FRUIT1 = "cherry.jpg"
+FRUIT2 = "strawberry.jpg"
+FRUIT3 = "blueberry.jpg"
+FRUITS = 7
 
 """
 checks if ice got to the limit: 
@@ -61,6 +66,32 @@ def is_ice_loop(x, y, is_ice):
                 return True
     return False
 
+def create_all_fruits():
+    counter = 0
+    url = FRUIT1
+    while counter<7:
+        if counter == 4:
+            url = FRUIT2
+        if counter == 6:
+            url = FRUIT3
+        numx = random.randint(0,9)
+        numy = random.randint(0, 9)
+        while Map.Map[numy][numx].fruit != 0:
+            numx = random.randint(0, 9)
+            numy = random.randint(0, 9)
+        Map.Map[numy][numx].create_fruit(url)
+        print_pic(url, numx, numy, None)
+        counter = counter+1
+
+
+def who_won(pl1, pl2):
+    if pl1.score>pl2.score:
+        return pl1
+    elif pl1.score<pl2.score:
+        return pl2
+    else:
+        return None
+
 
 player1 = Player.Player(4, 4, "pink", 0, [0, -1], PLAYER1_PIC)
 player2 = Player.Player(5, 5, "purple", 0, [0, 1], PLAYER2_PIC)
@@ -71,8 +102,15 @@ size = (window_width, window_height)
 screen = pygame.display.set_mode(size)
 img = pygame.image.load(IMAGE)
 screen.blit(img, (0, 0))
+create_all_fruits()
 print_pic(PLAYER1_PIC,player1.xcube, player1.ycube, None)
 print_pic(PLAYER2_PIC,player2.xcube, player2.ycube, None)
+b = player1.check_got_fruit()
+if b:
+    FRUITS = FRUITS-1
+b = player2.check_got_fruit()
+if b:
+    FRUITS = FRUITS-1
 
 moved = False
 ice_loop = False
@@ -80,7 +118,10 @@ clock = pygame.time.Clock()
 finish = False
 while not finish:
     if ice_loop:
-        print_pic(Map.Map[ylocate][xlocate].update_ice(), xlocate, ylocate, None)
+        url = Map.Map[ylocate][xlocate].update_ice()
+        print_pic(url[0], xlocate, ylocate, None)
+        if url[1]!=None:
+            print_pic(url[1], xlocate, ylocate, None)
         xlocate = xlocate + xi2
         ylocate = ylocate + yi2
         ice_loop = is_ice_loop(xlocate, ylocate, is_ice)
@@ -110,8 +151,18 @@ while not finish:
                 moved = False
             if moved:
                 try_move(player1)
+    b = player1.check_got_fruit()
+    if b:
+        FRUITS = FRUITS - 1
+    b = player2.check_got_fruit()
+    if b:
+        FRUITS = FRUITS - 1
+    if FRUITS==0:
+        finish = True
     clock.tick(REFRESH_RATE)
 pygame.quit()
+
+
 
 """
 # Press the green button in the gutter to run the script.
