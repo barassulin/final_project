@@ -7,7 +7,15 @@ EMPTY_CUBE = 'empty_cube.jpg'
 PLAYER1_PIC = 'probPL1.jpg'
 PLAYER2_PIC = 'probPL2.jpg'
 REFRESH_RATE = 10
+FRUIT1 = "cherry.jpg"
+FRUIT2 = "strawberry.jpg"
+FRUIT3 = "blueberry.jpg"
 
+FRUIT_DICTIONARY = {
+    FRUIT1: 1,
+    FRUIT2: 2,
+    FRUIT3: 3,
+}
 
 class Cube:
     def __init__(self, pixelw, pixelh, fruit, ice):
@@ -19,22 +27,21 @@ class Cube:
     def update_ice(self):
         if self.ice:
             self.ice = False
-            return EMPTY_CUBE
+            if self.fruit>0:
+                return EMPTY_CUBE, [k for k, v in FRUIT_DICTIONARY.items() if v == self.fruit][0]
+            else:
+                return EMPTY_CUBE, None
         else:
             self.ice = True
-            return ICE
+            return ICE, None
 
     def got_fruit(self):
         score = self.fruit
         self.fruit = 0
         return score
 
-"""
-FRUIT_DICTIONARY = {
-    1: "FRUIT1",
-    2: "FRUIT2"
-}
-    if uri in REDIRECTION_DICTIONARY:
-        uri = REDIRECTION_DICTIONARY[uri]
+    def create_fruit(self, url):
+        self.fruit = FRUIT_DICTIONARY[url]
 
-"""
+
+
